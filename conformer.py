@@ -498,10 +498,10 @@ class ShuffleChannelAttention(nn.Module):
         self.g=groups
         self.se=nn.Sequential(
             nn.Conv2d(channel,channel//reduction,1,padding=1,bias=False),
-            nn.LayerNorm(channel//reduction),
+            nn.BatchNorm2d(channel//reduction),
             nn.ReLU(),
             nn.Conv2d(channel//reduction,channel,3,bias=False),
-            nn.LayerNorm(channel)
+            nn.BatchNorm2d(channel)
         )
         self.sigmoid=nn.Sigmoid()
         
@@ -525,9 +525,9 @@ class ShuffleChannelAttention(nn.Module):
 class LDELayer(nn.Module):
     def __init__(self):
         super(LDELayer, self).__init__()
-        self.operation_stage_1=nn.Sequential(nn.Conv2d(384,64,kernel_size=7,stride=1,padding=6,dilation=2),nn.LayerNorm(64), nn.ReLU())  
-        self.operation_stage_2=nn.Sequential(nn.Conv2d(384,64,kernel_size=5,stride=1,padding=4,dilation=2), nn.LayerNorm(64),nn.ReLU())
-        self.operation_stage_3=nn.Sequential(nn.Conv2d(384,64,kernel_size=3,stride=1,padding=2,dilation=2),nn.LayerNorm(64),nn.ReLU())
+        self.operation_stage_1=nn.Sequential(nn.Conv2d(384,64,kernel_size=7,stride=1,padding=6,dilation=2),nn.BatchNorm2d(64), nn.ReLU())  
+        self.operation_stage_2=nn.Sequential(nn.Conv2d(384,64,kernel_size=5,stride=1,padding=4,dilation=2), nn.BatchNorm2d(64),nn.ReLU())
+        self.operation_stage_3=nn.Sequential(nn.Conv2d(384,64,kernel_size=3,stride=1,padding=2,dilation=2),nn.BatchNorm2d(64),nn.ReLU())
         self.operation_stage_4=nn.AvgPool2d(4,4)        		
         self.operation_stage_5=nn.MaxPool2d(4,4)
         self.ca_1=ShuffleChannelAttention(channel=576,reduction=16,kernel_size=3,groups=4)
